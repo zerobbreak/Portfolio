@@ -23,17 +23,24 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
+import { Header } from "./components/Header";
+import { Footer } from "./components/Footer";
+
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className="scroll-smooth">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
       </head>
-      <body>
-        {children}
+      <body className="flex flex-col min-h-screen">
+        <Header />
+        <main className="flex-grow pt-20">
+          {children}
+        </main>
+        <Footer />
         <ScrollRestoration />
         <Scripts />
       </body>
