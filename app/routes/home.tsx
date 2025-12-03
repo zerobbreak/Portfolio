@@ -188,7 +188,7 @@ export default function Home() {
 
             <div className="flex justify-center gap-6 mt-8">
               <a
-                href="https://github.com/username"
+                href="https://github.com/zerobbreak"
                 target="_blank"
                 className="bg-white/10 hover:bg-white/20 p-3 rounded-full transition-colors backdrop-blur-sm"
                 aria-label="GitHub Profile"
@@ -196,7 +196,7 @@ export default function Home() {
                 <BsGithub size={24} />
               </a>
               <a
-                href="https://linkedin.com/in/username"
+                href="https://www.linkedin.com/in/unathi-tshuma-7a30a523b/"
                 target="_blank"
                 className="bg-white/10 hover:bg-white/20 p-3 rounded-full transition-colors backdrop-blur-sm"
                 aria-label="LinkedIn Profile"
@@ -204,7 +204,7 @@ export default function Home() {
                 <LiaLinkedin size={24} />
               </a>
               <a
-                href="mailto:email@example.com"
+                href="mailto:utshuma6@gmail.com"
                 className="bg-white/10 hover:bg-white/20 p-3 rounded-full transition-colors backdrop-blur-sm"
                 aria-label="Email Me"
               >
