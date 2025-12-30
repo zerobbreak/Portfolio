@@ -18,7 +18,7 @@ import { BsGithub } from "react-icons/bs";
 import { LiaLinkedin } from "react-icons/lia";
 import { BiMailSend } from "react-icons/bi";
 
-export function meta({ }: Route.MetaArgs) {
+export function meta({}: Route.MetaArgs) {
   return [
     { title: "Unathi Tshuma - Portfolio" },
     { name: "description", content: "Welcome to my professional portfolio!" },
@@ -28,62 +28,105 @@ export function meta({ }: Route.MetaArgs) {
 export default function Home() {
   const projects = [
     {
-      title: "Snapgram",
+      title: "Lumina AI Notes",
       description:
-        "A modern social media application built with React and Appwrite. Features a stunning UI with dark mode, infinite scroll feed, story functionality, and robust user authentication. Allows users to create, like, and save posts in real-time.",
-      image: "/projects/snapgram.png",
-      technologies: ["React", "Appwrite", "Tailwind CSS", "React Query", "TypeScript"],
-      githubUrl: "https://github.com/username/snapgram",
+        "AI-powered note-taking application designed to enhance productivity. Features intelligent organization, auto-summarization, and a powerful search capability. Solves the problem of information overload by helping users structure their thoughts effortlessly.",
+      image: "/projects/lumina-ai-notes.png",
+      technologies: [
+        "React",
+        "TypeScript",
+        "OpenAI API",
+        "Tailwind CSS",
+        "Vite",
+      ],
+      githubUrl: "https://github.com/zerobbreak/Lumina-AI-Notes",
+      liveUrl: "#",
+    },
+    {
+      title: "AI-Mazing",
+      description:
+        "An interactive AI learning platform that simplifies machine learning concepts for beginners. Features gamified tutorials and visual demonstrations. Aims to make AI education accessible and engaging for everyone.",
+      image: "/projects/ai-mazing.png",
+      technologies: ["React", "Python", "TensorFlow.js", "Framer Motion"],
+      githubUrl: "https://github.com/zerobbreak/AI-Mazing",
+      liveUrl: "#",
+    },
+    {
+      title: "Threads App Clone",
+      description:
+        "A modern social media platform clone replicating the core features of Threads. Includes real-time updates, threaded conversations, and a sleek mobile-first design. Demonstrates proficiency in building complex social interactions.",
+      image: "/projects/threads-app.png",
+      technologies: [
+        "Next.js",
+        "TypeScript",
+        "PostgreSQL",
+        "Prisma",
+        "Tailwind CSS",
+      ],
+      githubUrl: "https://github.com/zerobbreak/Threads-app",
+      liveUrl: "#",
+    },
+    {
+      title: "Customer Service ChatBot",
+      description:
+        "Intelligent chatbot leveraging Natural Language Processing to automate customer support. Handles inquiries, schedules appointments, and provides instant responses, significantly reducing wait times for users.",
+      image: "/projects/chatbot.png",
+      technologies: ["Python", "NLP", "Flask", "React", "OpenAI API"],
+      githubUrl: "https://github.com/zerobbreak/ChatBot",
       liveUrl: "#",
     },
     {
       title: "Job Market Agent",
       description:
-        "An intelligent automated agent that streamlines the job application process. Features include automated company research, smart CV generation with DOCX export, and automated testing for reliability. Built to help developers navigate the job market efficiently.",
+        "An automated agent that streamlines the job hunt. Performs company research, generates tailored CVs, and tracks applications. Built to save developers time and increase application quality.",
       image: "/projects/job-market-agent.png",
-      technologies: ["Python", "Selenium", "OpenAI API", "PyTest", "python-docx"],
-      githubUrl: "https://github.com/username/job-market-agent",
-      liveUrl: "#",
-    },
-    {
-      title: "EventEase - Event Management System",
-      description:
-        "A comprehensive event management platform that organizes event details, tracks venue bookings, and manages attendee guest lists. Features include venue capacity management, booking history, and real-time event status updates.",
-      image: "/projects/event-ease.png",
-      technologies: ["C#", "Asp.net", "Azure", "SSMS", "Bootstrap"],
-      githubUrl: "https://github.com/username/event-ease",
-      liveUrl: "#",
+      technologies: [
+        "Python",
+        "Selenium",
+        "OpenAI API",
+        "PyTest",
+        "python-docx",
+      ],
+      githubUrl: "https://github.com/zerobbreak/Job-Market-Agent",
+      liveUrl: "https://github.com/zerobbreak/Job-Market-Frontend",
     },
     {
       title: "University Library System",
       description:
-        "A dual-interface library management system featuring a comprehensive Admin Panel for inventory and user management, and a User Panel for book discovery and borrowing status. Built with a robust SQL database architecture for reliable data management.",
+        "Comprehensive library management system with Admin and User panels. Manages inventory, tracks borrowing, and handles fines. Built with a robust SQL database architecture for data integrity.",
       image: "/projects/library-system.png",
       technologies: ["React", "SQL", "Node.js", "Express", "Tailwind CSS"],
-      githubUrl: "https://github.com/username/library-system",
+      githubUrl: "https://github.com/zerobbreak/University-Library",
       liveUrl: "#",
-    },
-    {
-      title: "Weather Forecast App",
-      description:
-        "A weather application that provides current conditions and 7-day forecasts for any location. Features include interactive maps, hourly predictions, severe weather alerts, and historical weather data comparison.",
-      image: "/projects/Weather app.png",
-      technologies: ["JavaScript", "React", "OpenWeather API", "Leaflet Maps", "CSS3"],
-      githubUrl: "https://github.com/username/weather-app",
-      liveUrl: "https://weather-forecast-demo.vercel.app",
     },
   ];
 
   const skills = [
-    { name: "JavaScript", icon: <SiJavascript size={40} />, color: "text-yellow-400" },
-    { name: "TypeScript", icon: <SiTypescript size={40} />, color: "text-blue-600" },
+    {
+      name: "JavaScript",
+      icon: <SiJavascript size={40} />,
+      color: "text-yellow-400",
+    },
+    {
+      name: "TypeScript",
+      icon: <SiTypescript size={40} />,
+      color: "text-blue-600",
+    },
     { name: "Python", icon: <SiPython size={40} />, color: "text-blue-500" },
     { name: "MongoDB", icon: <SiMongodb size={40} />, color: "text-green-500" },
     { name: "HTML5", icon: <SiHtml5 size={40} />, color: "text-orange-600" },
     { name: "CSS3", icon: <SiCss3 size={40} />, color: "text-blue-500" },
     { name: "React", icon: <SiReact size={40} />, color: "text-cyan-400" },
-    { name: "Node.js", icon: <SiNodedotjs size={40} />, color: "text-green-600" },
-    { name: "Express", icon: <SiExpress size={40} />, color: "text-gray-900 dark:text-white" },
+    {
+      name: "Node.js",
+      icon: <SiNodedotjs size={40} />,
+      color: "text-green-600",
+    },
+    {
+      name: "Express",
+      icon: <SiExpress size={40} />,
+      color: "text-gray-900 dark:text-white",
+    },
     { name: "Git", icon: <SiGit size={40} />, color: "text-red-500" },
   ];
 
@@ -91,7 +134,7 @@ export default function Home() {
     <div className="flex flex-col gap-20 pb-20">
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 to-pink-50 dark:from-gray-900 dark:to-gray-800 -z-10" />
+        <div className="absolute inset-0 bg-linear-to-br from-indigo-50 to-pink-50 dark:from-gray-900 dark:to-gray-800 -z-10" />
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 -z-10" />
 
         <div className="container mx-auto px-6 text-center">
@@ -124,7 +167,9 @@ export default function Home() {
       {/* Skills Section */}
       <section id="skills" className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white">Skills & Technologies</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white">
+            Skills & Technologies
+          </h2>
           <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
             My technical toolkit and the technologies I love to work with.
           </p>
@@ -135,10 +180,14 @@ export default function Home() {
               key={index}
               className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 text-center flex flex-col items-center justify-center gap-4 group"
             >
-              <div className={`transition-transform duration-300 group-hover:scale-110 ${skill.color}`}>
+              <div
+                className={`transition-transform duration-300 group-hover:scale-110 ${skill.color}`}
+              >
                 {skill.icon}
               </div>
-              <h3 className="font-semibold text-gray-900 dark:text-white">{skill.name}</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white">
+                {skill.name}
+              </h3>
             </div>
           ))}
         </div>
@@ -147,9 +196,12 @@ export default function Home() {
       {/* Projects Section */}
       <section id="projects" className="container mx-auto px-6 pt-20">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white">Featured Projects</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white">
+            Featured Projects
+          </h2>
           <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Here are some of the projects I've worked on recently. Each one presented unique challenges and learning opportunities.
+            Here are some of the projects I've worked on recently. Each one
+            presented unique challenges and learning opportunities.
           </p>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -167,22 +219,23 @@ export default function Home() {
             <h2 className="text-3xl md:text-4xl font-bold mb-6">About Me</h2>
             <div className="text-lg md:text-xl text-indigo-100 mb-8 leading-relaxed space-y-4 text-left">
               <p>
-                Hi I am enthusiastic and detail-oriented student with a passion
-                for web development, currently pursuing studies in web
-                technologies. Eager to embark on a journey into full-stack
-                development, I have a solid foundation in various programming
-                languages and frameworks.
+                My journey into tech began with a curiosity about how the web
+                works, which quickly evolved into a passion for building
+                interactive experiences. I started with the basics of HTML and
+                CSS, and since then, I've immersed myself in the JavaScript
+                ecosystem, mastering React and exploring backend technologies.
               </p>
               <p>
-                My journey in web development started with HTML and CSS, and
-                quickly expanded to JavaScript and modern frameworks like React.
-                I'm passionate about creating clean, efficient code and
-                user-friendly interfaces that solve real-world problems.
+                One of my proudest achievements has been building full-stack
+                applications that solve real problems, like my Job Market Agent
+                which automates tedious application processes. I believe in
+                writing clean, maintainable code and am constantly pushing
+                myself to learn new tools and best practices.
               </p>
               <p>
-                When I'm not coding, you can find me exploring new technologies,
-                contributing to open-source projects, or expanding my knowledge
-                through online courses and tech meetups.
+                Currently, I'm diving deeper into AI integration in web apps and
+                expanding my knowledge of cloud services. When I'm not coding,
+                you can find me gaming, reading about the latest tech trends.
               </p>
             </div>
 
@@ -218,9 +271,12 @@ export default function Home() {
       {/* Contact Section */}
       <section id="contact" className="container mx-auto px-6 pt-20 max-w-4xl">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white">Get In Touch</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white">
+            Get In Touch
+          </h2>
           <p className="text-gray-600 dark:text-gray-400">
-            Have a project in mind or just want to say hi? Fill out the form below and I'll get back to you as soon as possible.
+            Have a project in mind or just want to say hi? Fill out the form
+            below and I'll get back to you as soon as possible.
           </p>
         </div>
 
@@ -229,22 +285,34 @@ export default function Home() {
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 mb-4">
               <BiMailSend size={24} />
             </div>
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Email</h3>
-            <p className="text-gray-600 dark:text-gray-400 text-sm">contact@example.com</p>
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+              Email
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 text-sm">
+              utshuma@gmail.com
+            </p>
           </div>
           <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 text-center">
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 mb-4">
               <span className="text-xl">📍</span>
             </div>
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Location</h3>
-            <p className="text-gray-600 dark:text-gray-400 text-sm">Cape Town, South Africa</p>
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+              Location
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 text-sm">
+              Midrand, Noordwyk, Johannesburg, South Africa
+            </p>
           </div>
           <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 text-center">
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 mb-4">
               <span className="text-xl">📞</span>
             </div>
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Phone</h3>
-            <p className="text-gray-600 dark:text-gray-400 text-sm">+27 12 345 6789</p>
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+              Phone
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 text-sm">
+              +27 81 565 7405
+            </p>
           </div>
         </div>
 
