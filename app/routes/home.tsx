@@ -64,16 +64,7 @@ export default function Home() {
         "Tailwind CSS",
       ],
       githubUrl: "https://github.com/zerobbreak/Threads-app",
-      liveUrl: "#",
-    },
-    {
-      title: "Customer Service ChatBot",
-      description:
-        "Intelligent chatbot leveraging Natural Language Processing to automate customer support. Handles inquiries, schedules appointments, and provides instant responses, significantly reducing wait times for users.",
-      image: "/projects/chatbot.png",
-      technologies: ["Python", "NLP", "Flask", "React", "OpenAI API"],
-      githubUrl: "https://github.com/zerobbreak/ChatBot",
-      liveUrl: "#",
+      liveUrl: "https://threads-app-1ab4.vercel.app/",
     },
     {
       title: "Job Market Agent",
@@ -88,7 +79,7 @@ export default function Home() {
         "python-docx",
       ],
       githubUrl: "https://github.com/zerobbreak/Job-Market-Agent",
-      liveUrl: "https://github.com/zerobbreak/Job-Market-Frontend",
+      liveUrl: "https://job-market-frontend.vercel.app/",
     },
     {
       title: "University Library System",
@@ -97,7 +88,22 @@ export default function Home() {
       image: "/projects/library-system.png",
       technologies: ["React", "SQL", "Node.js", "Express", "Tailwind CSS"],
       githubUrl: "https://github.com/zerobbreak/University-Library",
-      liveUrl: "#",
+      liveUrl: "https://university-library-navy.vercel.app/sign-in",
+    },
+    {
+      title: "AI Analyzer",
+      description:
+        "An intelligent resume analysis tool that leverages AI to evaluate resumes against job descriptions. Features automated skill matching, ATS compatibility scoring, and personalized improvement suggestions. Helps job seekers optimize their resumes for better application success rates.",
+      image: "/projects/ai-analyzer.png",
+      technologies: [
+        "React",
+        "TypeScript",
+        "OpenAI API",
+        "Tailwind CSS",
+        "Vite",
+      ],
+      githubUrl: "https://github.com/zerobbreak/AI-Analyzer",
+      liveUrl: "https://ai-resume-analyzer-pi-two.vercel.app/",
     },
   ];
 
