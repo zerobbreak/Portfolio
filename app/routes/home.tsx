@@ -1,6 +1,8 @@
+import React, { useState } from "react";
 import type { Route } from "./+types/home";
 import ProjectCard from "../components/ProjectCard";
 import ContactForm from "../components/ContactForm";
+import Globe from "../components/Globe";
 import { FaArrowRight } from "react-icons/fa";
 import {
   SiCss3,
@@ -17,6 +19,41 @@ import {
 import { BsGithub } from "react-icons/bs";
 import { LiaLinkedin } from "react-icons/lia";
 import { BiMailSend } from "react-icons/bi";
+import { resend } from "../lib/resend.server";
+import { getContactEmailHtml } from "../lib/email-templates.server";
+
+export async function action({ request }: { request: Request }) {
+  console.log("Contact form action triggered");
+  const formData = await request.formData();
+  const name = formData.get("name") as string;
+  const email = formData.get("email") as string;
+  const message = formData.get("message") as string;
+
+  console.log(`Attempting to send email for: ${name} (${email})`);
+
+  try {
+    const { data, error } = await resend.emails.send({
+      from: "Portfolio <onboarding@resend.dev>",
+      to: "utshuma6@gmail.com",
+      replyTo: email,
+      subject: `New Message from ${name}`,
+      html: getContactEmailHtml(name, email, message),
+    });
+
+
+    if (error) {
+      console.error("Resend API Error:", error);
+      return { success: false, error: error.message };
+    }
+
+    console.log("Email sent successfully via Resend:", data);
+    return { success: true, data };
+  } catch (err: any) {
+    console.error("Server Action Exception:", err);
+    return { success: false, error: err.message };
+  }
+}
+
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -24,6 +61,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "description", content: "Welcome to my professional portfolio!" },
   ];
 }
+
 
 export default function Home() {
   const projects = [
@@ -107,6 +145,8 @@ export default function Home() {
     },
   ];
 
+  const [hoverColor, setHoverColor] = useState<string | null>(null);
+
   const skills = [
     {
       name: "JavaScript",
@@ -138,6 +178,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col gap-20 pb-20">
+      <Globe highlightColor={hoverColor} />
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-linear-to-br from-indigo-50 to-pink-50 dark:from-gray-900 dark:to-gray-800 -z-10" />
@@ -151,7 +192,7 @@ export default function Home() {
             Hi, I am <span className="text-gradient">Unathi Tshuma</span>
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300 mb-10 max-w-2xl mx-auto animate-fade-in-up delay-200">
-            Junior Web developer / Full stack Javascript developer
+            Junior Python Developer / Full-stack Web developer
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up delay-300">
             <a
@@ -170,52 +211,84 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Skills Section */}
-      <section id="skills" className="container mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white">
-            Skills & Technologies
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            My technical toolkit and the technologies I love to work with.
-          </p>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8">
-          {skills.map((skill, index) => (
-            <div
-              key={index}
-              className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 text-center flex flex-col items-center justify-center gap-4 group"
-            >
-              <div
-                className={`transition-transform duration-300 group-hover:scale-110 ${skill.color}`}
-              >
-                {skill.icon}
+      {/* Side Aligned Content Container (Skills + Projects) */}
+      <div id="content-side-aligned" className="flex flex-col gap-20">
+        {/* Skills Section */}
+        <section id="skills" className="container mx-auto px-6 py-20">
+          <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-12 items-center">
+            <div className="animate-fade-in-up">
+              <div className="mb-12">
+                <h2 className="text-3xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white">
+                  Skills & Technologies
+                </h2>
+                <p className="text-lg text-gray-600 dark:text-gray-400 max-w-xl">
+                  My technical toolkit and the technologies I love to work with.
+                  I focus on building scalable, performant applications with a
+                  modern stack.
+                </p>
               </div>
-              <h3 className="font-semibold text-gray-900 dark:text-white">
-                {skill.name}
-              </h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
+                {skills.map((skill, index) => (
+                  <div
+                    key={index}
+                    onMouseEnter={() => {
+                      // Extract hex from tailwind text color or mapping
+                      const colorMap: Record<string, string> = {
+                        "text-yellow-400": "#facc15",
+                        "text-blue-600": "#2563eb",
+                        "text-blue-500": "#3b82f6",
+                        "text-green-500": "#22c55e",
+                        "text-orange-600": "#ea580c",
+                        "text-cyan-400": "#22d3ee",
+                        "text-green-600": "#16a34a",
+                        "text-red-500": "#ef4444",
+                      };
+                      setHoverColor(colorMap[skill.color] || "#6366f1");
+                    }}
+                    onMouseLeave={() => setHoverColor(null)}
+                    className="p-6 rounded-2xl bg-white/40 dark:bg-gray-900/40 backdrop-blur-md border border-white/20 dark:border-gray-800/50 shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-300 hover:-translate-y-2 text-center flex flex-col items-center justify-center gap-4 group"
+                  >
+                    <div
+                      className={`transition-transform duration-300 group-hover:scale-110 ${skill.color}`}
+                    >
+                      {skill.icon}
+                    </div>
+                    <h3 className="font-semibold text-gray-900 dark:text-white">
+                      {skill.name}
+                    </h3>
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
-        </div>
-      </section>
+            {/* Right side left empty for the globe */}
+            <div className="hidden lg:block h-full" />
+          </div>
+        </section>
 
-      {/* Projects Section */}
-      <section id="projects" className="container mx-auto px-6 pt-20">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white">
-            Featured Projects
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Here are some of the projects I've worked on recently. Each one
-            presented unique challenges and learning opportunities.
-          </p>
-        </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {projects.map((project, index) => (
-            <ProjectCard key={index} {...project} />
-          ))}
-        </div>
-      </section>
+        {/* Projects Section */}
+        <section id="projects" className="container mx-auto px-6 pt-20">
+          <div className="grid lg:grid-cols-[0.8fr_1.2fr] gap-12 items-start">
+            {/* Left side empty for the globe */}
+            <div className="hidden lg:block h-full" />
+            <div>
+              <div className="mb-16">
+                <h2 className="text-3xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white">
+                  Featured Projects
+                </h2>
+                <p className="text-lg text-gray-600 dark:text-gray-400 max-w-xl">
+                  Here are some of the projects I've worked on recently. Each
+                  one presented unique challenges and learning opportunities.
+                </p>
+              </div>
+              <div className="grid md:grid-cols-2 gap-8">
+                {projects.map((project, index) => (
+                  <ProjectCard key={index} {...project} />
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
 
       {/* About Section */}
       <section id="about" className="container mx-auto px-6 pt-20">
