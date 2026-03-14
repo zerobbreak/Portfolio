@@ -58,31 +58,29 @@ export function Header() {
             </div>
 
             {/* Mobile Nav */}
-            {isOpen && (
-                <div className="md:hidden absolute top-full left-0 right-0 bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 shadow-lg">
-                    <nav className="flex flex-col p-4 space-y-4">
-                        {navItems.map((item) => (
-                            <Link
-                                key={item.name}
-                                to={item.path}
-                                className="text-base font-medium text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400"
-                                onClick={() => setIsOpen(false)}
-                            >
-                                {item.name}
-                            </Link>
-                        ))}
-                        <a
-                            href="/resume.pdf"
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-block text-center px-5 py-2.5 rounded-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-sm font-medium hover:bg-indigo-600 dark:hover:bg-indigo-400 dark:hover:text-white transition-all"
+            <div className={`md:hidden absolute top-full left-0 right-0 bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 shadow-lg transition-all duration-300 ease-in-out ${isOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4 pointer-events-none"}`}>
+                <nav className="flex flex-col p-4 space-y-4">
+                    {navItems.map((item) => (
+                        <Link
+                            key={item.name}
+                            to={item.path}
+                            className="text-base font-medium text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400"
                             onClick={() => setIsOpen(false)}
                         >
-                            Resume
-                        </a>
-                    </nav>
-                </div>
-            )}
+                            {item.name}
+                        </Link>
+                    ))}
+                    <a
+                        href="/resume.pdf"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-block text-center px-5 py-2.5 rounded-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-sm font-medium hover:bg-indigo-600 dark:hover:bg-indigo-400 dark:hover:text-white transition-all"
+                        onClick={() => setIsOpen(false)}
+                    >
+                        Resume
+                    </a>
+                </nav>
+            </div>
         </header>
     );
 }

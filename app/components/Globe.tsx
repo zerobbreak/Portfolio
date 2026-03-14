@@ -62,8 +62,9 @@ const Globe: React.FC<GlobeProps> = ({ highlightColor }) => {
     scene.add(globeGroup);
 
     // Geometry parameters
-    const size = 2.5;
-    const segments = 24;
+    const isMobile = window.innerWidth < 768;
+    const size = isMobile ? 1.6 : 2.5;
+    const segments = isMobile ? 16 : 24; // Lower detail on mobile
 
     // Materials
     const isDark = document.documentElement.classList.contains("dark");
@@ -147,9 +148,12 @@ const Globe: React.FC<GlobeProps> = ({ highlightColor }) => {
     });
 
     // Targeted Horizontal shifts for perfect timing
+    const isMobileShift = window.innerWidth < 768;
+    const shiftAmt = isMobileShift ? 15 : 50; // Minimal shift on mobile to avoid overlap
+
     // Segment 1: Shift to Right for Skills
     gsap.to(containerRef.current, {
-      xPercent: 50,
+      xPercent: shiftAmt,
       ease: "power2.inOut",
       scrollTrigger: {
         trigger: "#skills",
@@ -161,7 +165,7 @@ const Globe: React.FC<GlobeProps> = ({ highlightColor }) => {
 
     // Segment 2: Shift to Left for Projects (Immediately as header enters)
     gsap.to(containerRef.current, {
-      xPercent: -50,
+      xPercent: -shiftAmt,
       ease: "power2.inOut",
       scrollTrigger: {
         trigger: "#projects",
@@ -229,7 +233,7 @@ const Globe: React.FC<GlobeProps> = ({ highlightColor }) => {
     <div
       ref={containerRef}
       className="fixed inset-0 pointer-events-none flex items-center justify-center z-0 overflow-hidden will-change-transform"
-      style={{ opacity: 0.7, backfaceVisibility: "hidden" }}
+      style={{ opacity: window.innerWidth < 768 ? 0.3 : 0.7, backfaceVisibility: "hidden" }}
       aria-hidden="true"
     />
   );
