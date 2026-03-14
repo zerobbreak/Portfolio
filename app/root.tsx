@@ -33,8 +33,31 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#4f46e5" />
         <Meta />
         <Links />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Person",
+              "name": "Unathi Tshuma",
+              "jobTitle": "Junior Python & Full-stack Web Developer",
+              "url": "https://unathi-tshuma.com",
+              "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Johannesburg",
+                "addressCountry": "South Africa"
+              },
+              "sameAs": [
+                "https://github.com/zerobbreak",
+                "https://www.linkedin.com/in/unathi-tshuma-7a30a523b/"
+              ],
+              "knowsAbout": ["Python", "JavaScript", "TypeScript", "React", "Node.js", "MongoDB", "Express", "AI Integration"]
+            })
+          }}
+        />
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -55,7 +78,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         />
       </head>
 
-      <body className="flex flex-col min-h-screen">
+      <body className="flex flex-col min-h-screen bg-white dark:bg-gray-950 transition-colors duration-300">
         <Header />
         <main className="grow pt-20">{children}</main>
         <Footer />

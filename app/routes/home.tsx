@@ -57,8 +57,16 @@ export async function action({ request }: { request: Request }) {
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Unathi Tshuma - Portfolio" },
-    { name: "description", content: "Welcome to my professional portfolio!" },
+    { title: "Unathi Tshuma | Junior Python & Full-stack Web Developer" },
+    { name: "description", content: "Portfolio of Unathi Tshuma, a dedicated Junior Python and Full-stack Web Developer specializing in React, Node.js, and AI-driven applications." },
+    { name: "keywords", content: "Python, React, Full-stack Developer, Web Development, Johannesbung Developer, AI Integration, TypeScript, Node.js" },
+    { property: "og:title", content: "Unathi Tshuma | Junior Python & Full-stack Web Developer" },
+    { property: "og:description", content: "Explore my portfolio of web applications and AI tools built with modern technologies." },
+    { property: "og:type", content: "website" },
+    { property: "og:url", content: "https://unathi-tshuma.com" }, // User should update with actual domain
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:title", content: "Unathi Tshuma | Junior Python & Full-stack Web Developer" },
+    { name: "twitter:description", content: "Explore my portfolio of web applications and AI tools built with modern technologies." },
   ];
 }
 
