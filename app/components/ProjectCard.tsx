@@ -18,7 +18,7 @@ export default function ProjectCard({
   liveUrl,
 }: ProjectCardProps) {
   return (
-    <div className="group relative bg-white dark:bg-gray-900 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-800 hover:border-indigo-500 dark:hover:border-indigo-500 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1">
+    <div className="group relative bg-white dark:bg-gray-900 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-800 hover:border-indigo-500 dark:hover:border-indigo-500 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 flex flex-col h-full">
       <div className="aspect-video overflow-hidden relative">
         <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-300 z-10" />
         <img
@@ -28,7 +28,7 @@ export default function ProjectCard({
         />
       </div>
 
-      <div className="p-6 flex flex-col h-full">
+      <div className="p-6 flex flex-col flex-1">
         <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
           {title}
         </h3>

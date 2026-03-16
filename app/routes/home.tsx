@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import type { Route } from "./+types/home";
 import ProjectCard from "../components/ProjectCard";
+import WorkExperience from "../components/WorkExperience";
 import ContactForm from "../components/ContactForm";
 import Globe from "../components/Globe";
 import { FaArrowRight } from "react-icons/fa";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
 import {
   SiCss3,
   SiExpress,
@@ -154,6 +158,60 @@ export default function Home() {
   ];
 
   const [hoverColor, setHoverColor] = useState<string | null>(null);
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Fade in sections on scroll
+    const sections = ["#skills", "#projects", "#experience", "#about", "#contact"];
+
+    sections.forEach((sectionId) => {
+      gsap.fromTo(
+        sectionId,
+        {
+          opacity: 0,
+          y: 50,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: sectionId,
+            start: "top 85%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    });
+
+    // Special staggered animation for About section children
+    gsap.fromTo(
+      "#about .max-w-3xl > *",
+      {
+        opacity: 0,
+        y: 30,
+      },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        stagger: 0.2,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: "#about",
+          start: "top 75%",
+        },
+      }
+    );
+
+    return () => {
+      ScrollTrigger.getAll().forEach((t) => t.kill());
+    };
+  }, []);
+
 
   const skills = [
     {
@@ -224,7 +282,8 @@ export default function Home() {
         {/* Skills Section */}
         <section id="skills" className="container mx-auto px-6 py-20">
           <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-12 items-center">
-            <div className="animate-fade-in-up">
+            <div>
+
               <div className="mb-12">
                 <h2 className="text-3xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white">
                   Skills & Technologies
@@ -296,6 +355,9 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* Experience Section */}
+        <WorkExperience />
       </div>
 
       {/* About Section */}
