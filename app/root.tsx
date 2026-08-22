@@ -19,7 +19,7 @@ export const links: Route.LinksFunction = () => [
   },
   {
     rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
+    href: "https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Manrope:wght@400..800&display=swap",
   },
 ];
 
@@ -33,7 +33,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#4f46e5" />
+        <meta name="theme-color" content="#07080a" />
         <Meta />
         <Links />
         <script
@@ -78,7 +78,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         />
       </head>
 
-      <body className="flex flex-col min-h-screen bg-white dark:bg-gray-950 transition-colors duration-300">
+      <body className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-300 selection:bg-brand-primary/30">
         <Header />
         <main className="grow pt-20">{children}</main>
         <Footer />
@@ -110,11 +110,14 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   }
 
   return (
-    <main className="pt-16 p-4 container mx-auto">
-      <h1>{message}</h1>
-      <p>{details}</p>
+    <main className="pt-32 p-4 container mx-auto min-h-screen grid-bg">
+      <p className="font-mono text-xs tracking-[0.3em] uppercase text-brand-primary mb-4">
+        // system_error
+      </p>
+      <h1 className="font-mono text-4xl font-bold mb-4">{message}</h1>
+      <p className="text-muted-foreground">{details}</p>
       {stack && (
-        <pre className="w-full p-4 overflow-x-auto">
+        <pre className="w-full p-4 mt-6 overflow-x-auto bg-card border border-border text-sm">
           <code>{stack}</code>
         </pre>
       )}

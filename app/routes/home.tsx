@@ -7,6 +7,7 @@ import Globe from "../components/Globe";
 import { FaArrowRight } from "react-icons/fa";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useTilt } from "~/lib/useTilt";
 
 import {
   SiCss3,
@@ -23,6 +24,7 @@ import {
 import { BsGithub } from "react-icons/bs";
 import { LiaLinkedin } from "react-icons/lia";
 import { BiMailSend } from "react-icons/bi";
+import { HiOutlineLocationMarker, HiOutlinePhone } from "react-icons/hi";
 import { resend } from "../lib/resend.server";
 import { getContactEmailHtml } from "../lib/email-templates.server";
 
@@ -74,6 +76,51 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
+interface Skill {
+  name: string;
+  icon: React.ReactNode;
+  color: string;
+  hex: string;
+}
+
+function SkillCard({
+  skill,
+  index,
+  onHover,
+  onLeave,
+}: {
+  skill: Skill;
+  index: number;
+  onHover: (hex: string) => void;
+  onLeave: () => void;
+}) {
+  const tilt = useTilt<HTMLDivElement>(8);
+  return (
+    <div
+      ref={tilt.ref}
+      onMouseEnter={() => onHover(skill.hex)}
+      onMouseMove={tilt.onMouseMove}
+      onMouseLeave={() => {
+        tilt.onMouseLeave();
+        onLeave();
+      }}
+      className="hud-frame group relative p-6 bg-card/60 backdrop-blur-md border border-border hover:border-brand-primary/40 text-center flex flex-col items-center justify-center gap-4 [transform-style:preserve-3d]"
+      style={{ transition: "transform 0.15s ease-out, border-color 0.3s" }}
+    >
+      <span className="absolute top-2 left-2 font-mono text-[9px] text-muted-foreground/50">
+        {String(index + 1).padStart(2, "0")}
+      </span>
+      <div
+        className={`transition-transform duration-300 group-hover:scale-110 ${skill.color}`}
+      >
+        {skill.icon}
+      </div>
+      <h3 className="font-mono text-xs uppercase tracking-wide text-foreground">
+        {skill.name}
+      </h3>
+    </div>
+  );
+}
 
 export default function Home() {
   const projects = [
@@ -158,10 +205,51 @@ export default function Home() {
   ];
 
   const [hoverColor, setHoverColor] = useState<string | null>(null);
-  const scrollRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    // Hero boot-up sequence
+    const heroTl = gsap.timeline({ delay: 0.1 });
+    heroTl
+      .fromTo(
+        ".hero-badge",
+        { opacity: 0, y: -10 },
+        { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" },
+      )
+      .fromTo(
+        ".hero-prompt",
+        { opacity: 0 },
+        { opacity: 1, duration: 0.4, ease: "power2.out" },
+        "-=0.2",
+      )
+      .fromTo(
+        ".hero-word",
+        { yPercent: 110, rotateX: reduceMotion ? 0 : -35 },
+        {
+          yPercent: 0,
+          rotateX: 0,
+          duration: 0.9,
+          stagger: 0.12,
+          ease: "power4.out",
+        },
+        "-=0.1",
+      )
+      .fromTo(
+        ".hero-sub",
+        { opacity: 0, y: 16 },
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
+        "-=0.4",
+      )
+      .fromTo(
+        ".hero-cta",
+        { opacity: 0, y: 16 },
+        { opacity: 1, y: 0, duration: 0.6, stagger: 0.1, ease: "power2.out" },
+        "-=0.3",
+      );
 
     // Fade in sections on scroll
     const sections = ["#skills", "#projects", "#experience", "#about", "#contact"];
@@ -189,7 +277,7 @@ export default function Home() {
 
     // Special staggered animation for About section children
     gsap.fromTo(
-      "#about .max-w-3xl > *",
+      "#about .about-reveal",
       {
         opacity: 0,
         y: 30,
@@ -198,7 +286,7 @@ export default function Home() {
         opacity: 1,
         y: 0,
         duration: 0.8,
-        stagger: 0.2,
+        stagger: 0.15,
         ease: "power2.out",
         scrollTrigger: {
           trigger: "#about",
@@ -207,75 +295,135 @@ export default function Home() {
       }
     );
 
+    // Marquee-adjacent skill/project card stagger
+    gsap.fromTo(
+      "#skills .skill-card",
+      { opacity: 0, y: 24 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        stagger: 0.05,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: "#skills",
+          start: "top 70%",
+        },
+      }
+    );
+
+    gsap.fromTo(
+      "#projects .project-card",
+      { opacity: 0, y: 24 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        stagger: 0.08,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: "#projects",
+          start: "top 70%",
+        },
+      }
+    );
+
     return () => {
+      heroTl.kill();
       ScrollTrigger.getAll().forEach((t) => t.kill());
     };
   }, []);
 
 
-  const skills = [
-    {
-      name: "JavaScript",
-      icon: <SiJavascript size={40} />,
-      color: "text-yellow-400",
-    },
-    {
-      name: "TypeScript",
-      icon: <SiTypescript size={40} />,
-      color: "text-blue-600",
-    },
-    { name: "Python", icon: <SiPython size={40} />, color: "text-blue-500" },
-    { name: "MongoDB", icon: <SiMongodb size={40} />, color: "text-green-500" },
-    { name: "HTML5", icon: <SiHtml5 size={40} />, color: "text-orange-600" },
-    { name: "CSS3", icon: <SiCss3 size={40} />, color: "text-blue-500" },
-    { name: "React", icon: <SiReact size={40} />, color: "text-cyan-400" },
-    {
-      name: "Node.js",
-      icon: <SiNodedotjs size={40} />,
-      color: "text-green-600",
-    },
-    {
-      name: "Express",
-      icon: <SiExpress size={40} />,
-      color: "text-gray-900 dark:text-white",
-    },
-    { name: "Git", icon: <SiGit size={40} />, color: "text-red-500" },
+  const skills: Skill[] = [
+    { name: "JavaScript", icon: <SiJavascript size={36} />, color: "text-yellow-400", hex: "#facc15" },
+    { name: "TypeScript", icon: <SiTypescript size={36} />, color: "text-blue-500", hex: "#3b82f6" },
+    { name: "Python", icon: <SiPython size={36} />, color: "text-sky-400", hex: "#38bdf8" },
+    { name: "MongoDB", icon: <SiMongodb size={36} />, color: "text-green-500", hex: "#22c55e" },
+    { name: "HTML5", icon: <SiHtml5 size={36} />, color: "text-orange-500", hex: "#f97316" },
+    { name: "CSS3", icon: <SiCss3 size={36} />, color: "text-blue-400", hex: "#60a5fa" },
+    { name: "React", icon: <SiReact size={36} />, color: "text-cyan-400", hex: "#22d3ee" },
+    { name: "Node.js", icon: <SiNodedotjs size={36} />, color: "text-green-600", hex: "#16a34a" },
+    { name: "Express", icon: <SiExpress size={36} />, color: "text-foreground", hex: "#9ca3af" },
+    { name: "Git", icon: <SiGit size={36} />, color: "text-red-500", hex: "#ef4444" },
+  ];
+
+  const tickerItems = [
+    "PYTHON", "REACT", "TYPESCRIPT", "NODE.JS", "AI_INTEGRATION",
+    "FASTAPI", "MONGODB", "GIT", "TAILWIND", "OPENAI_API",
   ];
 
   return (
-    <div className="flex flex-col gap-20 pb-20">
+    <div id="top" className="flex flex-col gap-20 pb-20">
       <Globe highlightColor={hoverColor} />
-      {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-linear-to-br from-indigo-50 to-pink-50 dark:from-gray-900 dark:to-gray-800 -z-10" />
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 -z-10" />
 
-        <div className="container mx-auto px-6 text-center">
-          <div className="inline-block mb-4 px-4 py-1.5 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 font-medium text-sm animate-fade-in-up">
+      {/* Hero Section */}
+      <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden" style={{ perspective: "800px" }}>
+        <div className="absolute inset-0 grid-bg -z-10" />
+        <div className="noise-overlay -z-10" />
+        <div className="scanline -z-10" />
+        <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-background -z-10" />
+
+        <div className="container mx-auto px-6 text-center relative">
+          <div className="hero-badge inline-flex items-center gap-2 mb-6 px-4 py-1.5 border border-brand-primary/40 text-brand-primary font-mono text-xs tracking-[0.2em] uppercase opacity-0">
+            <span className="w-1.5 h-1.5 rounded-full bg-brand-primary animate-pulse" />
             Available for hire
           </div>
-          <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-6 tracking-tight animate-fade-in-up delay-100">
-            Hi, I am <span className="text-gradient">Unathi Tshuma</span>
-          </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 mb-10 max-w-2xl mx-auto animate-fade-in-up delay-200">
-            Junior Python Developer / Full-stack Web developer
+
+          <p className="hero-prompt font-mono text-xs sm:text-sm text-muted-foreground mb-4 opacity-0">
+            unathi@dev:~$ whoami<span className="cursor-blink" />
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up delay-300">
+
+          <h1 className="font-mono text-4xl sm:text-5xl md:text-7xl font-bold mb-6 tracking-tight leading-[1.05]">
+            <span className="block overflow-hidden">
+              <span className="hero-word inline-block">Hi, I am</span>
+            </span>
+            <span className="block overflow-hidden">
+              <span className="hero-word inline-block text-gradient text-glow">Unathi Tshuma</span>
+            </span>
+          </h1>
+
+          <p className="hero-sub font-mono text-base sm:text-lg text-muted-foreground mb-10 max-w-2xl mx-auto opacity-0">
+            <span className="text-brand-primary">// </span>
+            Junior Python Developer — Full-stack Web Developer
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center font-mono text-sm">
             <a
               href="#projects"
-              className="px-8 py-4 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition-all hover:scale-105 shadow-lg hover:shadow-indigo-500/30 flex items-center justify-center gap-2"
+              className="hero-cta px-8 py-4 bg-brand-primary hover:bg-brand-primary-hover text-background font-semibold transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2 opacity-0 uppercase tracking-wide"
             >
-              View Work <FaArrowRight />
+              [ View Work <FaArrowRight size={13} /> ]
             </a>
             <a
               href="#contact"
-              className="px-8 py-4 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-indigo-500 dark:hover:border-indigo-500 text-gray-900 dark:text-white font-semibold transition-all hover:scale-105 flex items-center justify-center"
+              className="hero-cta px-8 py-4 border border-border hover:border-brand-primary text-foreground hover:text-brand-primary font-semibold transition-all hover:-translate-y-0.5 flex items-center justify-center opacity-0 uppercase tracking-wide"
             >
-              Contact Me
+              [ Contact Me ]
             </a>
           </div>
         </div>
+
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 font-mono text-[10px] tracking-[0.3em] uppercase text-muted-foreground">
+          <span className="w-px h-12 bg-linear-to-b from-brand-primary to-transparent" />
+          <span>Scroll</span>
+        </div>
       </section>
+
+      {/* Marquee ticker */}
+      <div className="border-y border-border py-4 overflow-hidden -mt-20 relative z-10 bg-background/60 backdrop-blur-sm">
+        <div className="flex whitespace-nowrap marquee-track w-max">
+          {[...tickerItems, ...tickerItems].map((item, i) => (
+            <span
+              key={i}
+              className="font-mono text-sm text-muted-foreground px-6 flex items-center gap-6"
+            >
+              {item}
+              <span className="text-brand-primary">◆</span>
+            </span>
+          ))}
+        </div>
+      </div>
 
       {/* Side Aligned Content Container (Skills + Projects) */}
       <div id="content-side-aligned" className="flex flex-col gap-20">
@@ -285,10 +433,13 @@ export default function Home() {
             <div>
 
               <div className="mb-12">
-                <h2 className="text-3xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white">
-                  Skills & Technologies
+                <span className="font-mono text-[11px] tracking-[0.3em] uppercase text-brand-primary mb-3 block">
+                  / 01 — Stack
+                </span>
+                <h2 className="font-mono text-3xl md:text-5xl font-bold mb-6 text-foreground">
+                  Skills &amp; Technologies
                 </h2>
-                <p className="text-lg text-gray-600 dark:text-gray-400 max-w-xl">
+                <p className="text-lg text-muted-foreground max-w-xl">
                   My technical toolkit and the technologies I love to work with.
                   I focus on building scalable, performant applications with a
                   modern stack.
@@ -296,33 +447,13 @@ export default function Home() {
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
                 {skills.map((skill, index) => (
-                  <div
-                    key={index}
-                    onMouseEnter={() => {
-                      // Extract hex from tailwind text color or mapping
-                      const colorMap: Record<string, string> = {
-                        "text-yellow-400": "#facc15",
-                        "text-blue-600": "#2563eb",
-                        "text-blue-500": "#3b82f6",
-                        "text-green-500": "#22c55e",
-                        "text-orange-600": "#ea580c",
-                        "text-cyan-400": "#22d3ee",
-                        "text-green-600": "#16a34a",
-                        "text-red-500": "#ef4444",
-                      };
-                      setHoverColor(colorMap[skill.color] || "#6366f1");
-                    }}
-                    onMouseLeave={() => setHoverColor(null)}
-                    className="p-6 rounded-2xl bg-white/40 dark:bg-gray-900/40 backdrop-blur-md border border-white/20 dark:border-gray-800/50 shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-300 hover:-translate-y-2 text-center flex flex-col items-center justify-center gap-4 group"
-                  >
-                    <div
-                      className={`transition-transform duration-300 group-hover:scale-110 ${skill.color}`}
-                    >
-                      {skill.icon}
-                    </div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white">
-                      {skill.name}
-                    </h3>
+                  <div key={skill.name} className="skill-card">
+                    <SkillCard
+                      skill={skill}
+                      index={index}
+                      onHover={setHoverColor}
+                      onLeave={() => setHoverColor(null)}
+                    />
                   </div>
                 ))}
               </div>
@@ -339,17 +470,22 @@ export default function Home() {
             <div className="hidden lg:block h-full" />
             <div>
               <div className="mb-16">
-                <h2 className="text-3xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white">
+                <span className="font-mono text-[11px] tracking-[0.3em] uppercase text-brand-primary mb-3 block">
+                  / 02 — Selected Work
+                </span>
+                <h2 className="font-mono text-3xl md:text-5xl font-bold mb-6 text-foreground">
                   Featured Projects
                 </h2>
-                <p className="text-lg text-gray-600 dark:text-gray-400 max-w-xl">
+                <p className="text-lg text-muted-foreground max-w-xl">
                   Here are some of the projects I've worked on recently. Each
                   one presented unique challenges and learning opportunities.
                 </p>
               </div>
               <div className="grid md:grid-cols-2 gap-8">
                 {projects.map((project, index) => (
-                  <ProjectCard key={index} {...project} />
+                  <div key={project.title} className="project-card">
+                    <ProjectCard {...project} index={index} />
+                  </div>
                 ))}
               </div>
             </div>
@@ -362,55 +498,71 @@ export default function Home() {
 
       {/* About Section */}
       <section id="about" className="container mx-auto px-6 pt-20">
-        <div className="bg-indigo-600 rounded-3xl p-8 md:p-16 text-white text-center relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none" />
-          <div className="relative z-10 max-w-3xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">About Me</h2>
-            <div className="text-lg md:text-xl text-indigo-100 mb-8 leading-relaxed space-y-4 text-left">
-              <p>
+        <span className="about-reveal font-mono text-[11px] tracking-[0.3em] uppercase text-brand-primary mb-3 block">
+          / 04 — About
+        </span>
+        <div className="about-reveal hud-frame bg-card border border-border relative overflow-hidden">
+          <div className="grid-bg absolute inset-0 opacity-40 pointer-events-none" />
+          {/* Terminal title bar */}
+          <div className="relative flex items-center gap-2 px-5 py-3 border-b border-border bg-background/40">
+            <span className="w-2.5 h-2.5 rounded-full bg-brand-secondary/70" />
+            <span className="w-2.5 h-2.5 rounded-full bg-muted-foreground/40" />
+            <span className="w-2.5 h-2.5 rounded-full bg-brand-primary/70" />
+            <span className="ml-3 font-mono text-xs text-muted-foreground">~/about.md</span>
+          </div>
+
+          <div className="relative p-8 md:p-16 max-w-3xl mx-auto">
+            <h2 className="about-reveal font-mono text-3xl md:text-4xl font-bold mb-8 text-foreground">
+              About Me
+            </h2>
+            <div className="text-base md:text-lg text-muted-foreground mb-10 leading-relaxed space-y-5 text-left">
+              <p className="about-reveal">
+                <span className="text-brand-primary font-mono"># </span>
                 My journey into tech began with a curiosity about how the web
                 works, which quickly evolved into a passion for building
                 interactive experiences. I started with the basics of HTML and
                 CSS, and since then, I've immersed myself in the JavaScript
                 ecosystem, mastering React and exploring backend technologies.
               </p>
-              <p>
+              <p className="about-reveal">
+                <span className="text-brand-primary font-mono"># </span>
                 One of my proudest achievements has been building full-stack
                 applications that solve real problems, like my Job Market Agent
                 which automates tedious application processes. I believe in
                 writing clean, maintainable code and am constantly pushing
                 myself to learn new tools and best practices.
               </p>
-              <p>
+              <p className="about-reveal">
+                <span className="text-brand-primary font-mono"># </span>
                 Currently, I'm diving deeper into AI integration in web apps and
                 expanding my knowledge of cloud services. When I'm not coding,
                 you can find me gaming, reading about the latest tech trends.
               </p>
             </div>
 
-            <div className="flex justify-center gap-6 mt-8">
+            <div className="about-reveal flex justify-center gap-4">
               <a
                 href="https://github.com/zerobbreak"
                 target="_blank"
-                className="bg-white/10 hover:bg-white/20 p-3 rounded-full transition-colors backdrop-blur-sm"
+                className="w-11 h-11 flex items-center justify-center border border-border hover:border-brand-primary hover:text-brand-primary text-muted-foreground transition-colors"
                 aria-label="GitHub Profile"
               >
-                <BsGithub size={24} />
+                <BsGithub size={20} />
               </a>
               <a
                 href="https://www.linkedin.com/in/unathi-tshuma-7a30a523b/"
                 target="_blank"
-                className="bg-white/10 hover:bg-white/20 p-3 rounded-full transition-colors backdrop-blur-sm"
+                className="w-11 h-11 flex items-center justify-center border border-border hover:border-brand-primary hover:text-brand-primary text-muted-foreground transition-colors"
                 aria-label="LinkedIn Profile"
               >
-                <LiaLinkedin size={24} />
+                <LiaLinkedin size={20} />
               </a>
               <a
                 href="mailto:utshuma6@gmail.com"
-                className="bg-white/10 hover:bg-white/20 p-3 rounded-full transition-colors backdrop-blur-sm"
+                className="w-11 h-11 flex items-center justify-center border border-border hover:border-brand-primary hover:text-brand-primary text-muted-foreground transition-colors"
                 aria-label="Email Me"
               >
-                <BiMailSend size={24} />
+                <BiMailSend size={20} />
               </a>
             </div>
           </div>
@@ -420,46 +572,49 @@ export default function Home() {
       {/* Contact Section */}
       <section id="contact" className="container mx-auto px-6 pt-20 max-w-4xl">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white">
+          <span className="font-mono text-[11px] tracking-[0.3em] uppercase text-brand-primary mb-3 block">
+            / 05 — Contact
+          </span>
+          <h2 className="font-mono text-3xl md:text-4xl font-bold mb-4 text-foreground">
             Get In Touch
           </h2>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-muted-foreground">
             Have a project in mind or just want to say hi? Fill out the form
             below and I'll get back to you as soon as possible.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 mb-12">
-          <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 text-center">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 mb-4">
-              <BiMailSend size={24} />
+        <div className="grid md:grid-cols-3 gap-6 mb-12">
+          <div className="hud-frame p-6 bg-card border border-border text-center">
+            <div className="inline-flex items-center justify-center w-12 h-12 border border-brand-primary/30 text-brand-primary mb-4">
+              <BiMailSend size={22} />
             </div>
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+            <h3 className="font-mono text-xs uppercase tracking-wide text-foreground mb-1.5">
               Email
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 text-sm">
-              utshuma@gmail.com
+            <p className="text-muted-foreground text-sm">
+              utshuma6@gmail.com
             </p>
           </div>
-          <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 text-center">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 mb-4">
-              <span className="text-xl">📍</span>
+          <div className="hud-frame p-6 bg-card border border-border text-center">
+            <div className="inline-flex items-center justify-center w-12 h-12 border border-brand-primary/30 text-brand-primary mb-4">
+              <HiOutlineLocationMarker size={22} />
             </div>
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+            <h3 className="font-mono text-xs uppercase tracking-wide text-foreground mb-1.5">
               Location
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 text-sm">
+            <p className="text-muted-foreground text-sm">
               Midrand, Noordwyk, Johannesburg, South Africa
             </p>
           </div>
-          <div className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 text-center">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 mb-4">
-              <span className="text-xl">📞</span>
+          <div className="hud-frame p-6 bg-card border border-border text-center">
+            <div className="inline-flex items-center justify-center w-12 h-12 border border-brand-primary/30 text-brand-primary mb-4">
+              <HiOutlinePhone size={22} />
             </div>
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+            <h3 className="font-mono text-xs uppercase tracking-wide text-foreground mb-1.5">
               Phone
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 text-sm">
+            <p className="text-muted-foreground text-sm">
               +27 81 565 7405
             </p>
           </div>

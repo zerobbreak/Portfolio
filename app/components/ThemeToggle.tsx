@@ -26,10 +26,10 @@ export function ThemeToggle() {
     return (
         <button
             onClick={toggleTheme}
-            className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-9 h-9 flex items-center justify-center border border-border text-muted-foreground hover:text-brand-primary hover:border-brand-primary transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-brand-primary"
             aria-label="Toggle dark mode"
         >
-            {theme === "light" ? <HiMoon size={20} /> : <HiSun size={20} />}
+            {theme === "light" ? <HiMoon size={16} /> : <HiSun size={16} />}
         </button>
     );
 }
