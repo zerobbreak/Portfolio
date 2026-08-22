@@ -73,17 +73,19 @@ export default function ContactForm() {
   return (
     <div className="w-full max-w-lg mx-auto">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 font-mono">
           <FormField
             control={form.control}
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name</FormLabel>
+                <FormLabel className="text-[11px] tracking-[0.15em] uppercase text-muted-foreground">
+                  {"> "}Name
+                </FormLabel>
                 <FormControl>
                   <Input
                     placeholder="John Doe"
-                    className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-indigo-500"
+                    className="bg-background border-border rounded-none focus-visible:ring-1 focus-visible:ring-brand-primary focus-visible:border-brand-primary font-sans"
                     {...field}
                   />
                 </FormControl>
@@ -97,12 +99,14 @@ export default function ContactForm() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel className="text-[11px] tracking-[0.15em] uppercase text-muted-foreground">
+                  {"> "}Email
+                </FormLabel>
                 <FormControl>
                   <Input
                     type="email"
                     placeholder="john@example.com"
-                    className="bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-indigo-500"
+                    className="bg-background border-border rounded-none focus-visible:ring-1 focus-visible:ring-brand-primary focus-visible:border-brand-primary font-sans"
                     {...field}
                   />
                 </FormControl>
@@ -116,11 +120,13 @@ export default function ContactForm() {
             name="message"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Message</FormLabel>
+                <FormLabel className="text-[11px] tracking-[0.15em] uppercase text-muted-foreground">
+                  {"> "}Message
+                </FormLabel>
                 <FormControl>
                   <Textarea
                     placeholder="Your message here..."
-                    className="min-h-[150px] bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-indigo-500 resize-none"
+                    className="min-h-[150px] bg-background border-border rounded-none focus-visible:ring-1 focus-visible:ring-brand-primary focus-visible:border-brand-primary resize-none font-sans"
                     {...field}
                   />
                 </FormControl>
@@ -132,26 +138,26 @@ export default function ContactForm() {
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-6 rounded-lg transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-indigo-500/30"
+            className="w-full bg-brand-primary hover:bg-brand-primary-hover text-background rounded-none font-mono font-semibold tracking-[0.15em] uppercase py-6 transition-all"
           >
             {isSubmitting ? (
-              "Sending..."
+              "Transmitting..."
             ) : (
               <>
-                Send Message <FaPaperPlane className="ml-2 h-4 w-4" />
+                [ Send Message <FaPaperPlane className="ml-2 h-3.5 w-3.5" /> ]
               </>
             )}
           </Button>
 
           {submitStatus === "success" && (
-            <div className="p-4 rounded-lg bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 text-center animate-fade-in text-sm">
-              Message sent successfully! Check the console for the output.
+            <div className="p-4 border border-brand-primary/40 bg-brand-primary/10 text-brand-primary text-center animate-fade-in text-xs tracking-wide">
+              $ message_sent — status: 200_OK
             </div>
           )}
 
           {submitStatus === "error" && (
-            <div className="p-4 rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-center animate-fade-in text-sm">
-              Something went wrong. Please try again later.
+            <div className="p-4 border border-destructive/40 bg-destructive/10 text-destructive text-center animate-fade-in text-xs tracking-wide">
+              $ transmission_failed — please try again
             </div>
           )}
         </form>

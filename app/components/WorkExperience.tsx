@@ -1,4 +1,8 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface Experience {
   role: string;
@@ -78,14 +82,38 @@ const experiences: Experience[] = [
 ];
 
 const WorkExperience: React.FC = () => {
+  const lineRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!lineRef.current) return;
+    const tween = gsap.fromTo(
+      lineRef.current,
+      { scaleY: 0 },
+      {
+        scaleY: 1,
+        ease: "none",
+        transformOrigin: "top",
+        scrollTrigger: {
+          trigger: lineRef.current.parentElement,
+          start: "top 70%",
+          end: "bottom 80%",
+          scrub: 0.6,
+        },
+      },
+    );
+    return () => {
+      tween.kill();
+    };
+  }, []);
+
   return (
     <section id="experience" className="container mx-auto px-6 py-20 relative overflow-hidden">
       {/* Header */}
       <div className="mb-20">
-        <span className="text-[12px] uppercase tracking-widest text-muted-foreground font-semibold mb-3 block">
-          Career
+        <span className="font-mono text-[11px] tracking-[0.3em] uppercase text-brand-primary mb-3 block">
+          / 03 — Career
         </span>
-        <h2 className="text-[26px] font-bold text-foreground mb-3">
+        <h2 className="font-mono text-[26px] font-bold text-foreground mb-3">
           Work Experience
         </h2>
         <p className="text-[14px] text-muted-foreground max-w-2xl leading-relaxed">
@@ -96,28 +124,33 @@ const WorkExperience: React.FC = () => {
       <div className="relative">
         {/* Timeline Line */}
         <div className="absolute left-[7.5px] top-2 bottom-2 w-px bg-border/60" />
+        <div
+          ref={lineRef}
+          className="absolute left-[7.5px] top-2 bottom-2 w-px bg-brand-primary origin-top"
+          style={{ transform: "scaleY(0)" }}
+        />
 
         <div className="space-y-16">
           {experiences.map((exp, index) => (
             <div key={index} className="relative pl-12 group">
               {/* Dot Marker */}
-              <div 
+              <div
                 className={`absolute left-0 top-2 w-[16px] h-[16px] rounded-full border-2 border-brand-primary z-10 transition-transform duration-300 group-hover:scale-125
-                  ${exp.current ? 'bg-brand-primary shadow-[0_0_0_4px_rgba(99,102,241,0.1)]' : 'bg-background'}`}
+                  ${exp.current ? 'bg-brand-primary shadow-[0_0_0_4px_color-mix(in_srgb,var(--color-brand-primary)_18%,transparent)]' : 'bg-background'}`}
               />
-              
+
               {/* Card */}
-              <div className="bg-secondary/20 dark:bg-secondary/10 border-[0.5px] border-border rounded-[12px] p-8 transition-all duration-300 hover:border-brand-primary/40 hover:bg-secondary/30 relative">
+              <div className="hud-frame bg-card/60 border-[0.5px] border-border p-8 transition-all duration-300 hover:border-brand-primary/40 hover:bg-card relative">
                 {/* Date Badge */}
-                <div className="md:absolute top-8 right-8 mb-4 md:mb-0 inline-block px-3 py-1 rounded-full bg-background/50 border-[0.5px] border-border backdrop-blur-sm">
-                  <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-tight">
-                    {exp.date}
+                <div className="md:absolute top-8 right-8 mb-4 md:mb-0 inline-block px-3 py-1 bg-background/50 border-[0.5px] border-border backdrop-blur-sm">
+                  <span className="font-mono text-[11px] font-semibold text-muted-foreground uppercase tracking-tight">
+                    [ {exp.date} ]
                   </span>
                 </div>
 
                 {/* Role & Company */}
                 <div className="mb-6">
-                  <h3 className="text-[16px] font-bold text-foreground mb-1.5 group-hover:text-brand-primary transition-colors">
+                  <h3 className="font-mono text-[16px] font-bold text-foreground mb-1.5 group-hover:text-brand-primary transition-colors">
                     {exp.role}
                   </h3>
                   <p className="text-[14px] text-brand-primary font-semibold tracking-wide">
@@ -130,7 +163,7 @@ const WorkExperience: React.FC = () => {
                   {exp.description.map((desc, i) => {
                     const parts = desc.split("–");
                     return (
-                      <li key={i} className="text-[13px] text-muted-foreground/90 leading-[1.6] flex items-start text-left">
+                      <li key={i} className="text-[13px] text-muted-foreground leading-[1.6] flex items-start text-left">
                         <span className="text-brand-primary mt-1 mr-3 shrink-0 font-bold opacity-80">–</span>
                         <div>
                           {parts.map((part, pidx) => (
@@ -149,9 +182,9 @@ const WorkExperience: React.FC = () => {
                 {/* Tech Tags */}
                 <div className="flex flex-wrap gap-2.5">
                   {exp.tech.map((skill, si) => (
-                    <span 
+                    <span
                       key={si}
-                      className="px-3.5 py-1.5 rounded-full bg-background/40 text-[11px] font-medium text-muted-foreground border-[0.5px] border-border transition-all duration-300 hover:bg-brand-primary hover:text-white hover:border-brand-primary"
+                      className="px-3.5 py-1.5 font-mono text-[11px] font-medium text-muted-foreground border-[0.5px] border-border transition-all duration-300 hover:bg-brand-primary hover:text-background hover:border-brand-primary"
                     >
                       {skill}
                     </span>
