@@ -196,38 +196,46 @@ const Globe: React.FC<GlobeProps> = ({ highlightColor }) => {
       },
     });
 
-    const isMobileShift = window.innerWidth < 768;
-    const shift = isMobileShift ? 12 : 46;
+    const shift = isMobile ? 12 : 46;
 
-    gsap.to(containerRef.current, {
-      xPercent: shift,
-      ease: "power2.inOut",
-      scrollTrigger: {
-        trigger: "#skills",
-        start: "top bottom",
-        end: "top 30%",
-        scrub: 1,
-      },
+    // Discrete, non-overlapping section transitions. Using a single reusable
+    // tween (overwrite: true) instead of independent scrub-tweens per section
+    // avoids competing writes to the same xPercent property, which was
+    // causing the sphere to jitter/stick between the Skills and Experience
+    // sections (Experience previously had no trigger at all, so the sphere
+    // stayed pinned at the Projects offset until About appeared).
+    const setGlobeX = (x: number) => {
+      gsap.to(containerRef.current, {
+        xPercent: x,
+        duration: 1,
+        ease: "power2.inOut",
+        overwrite: true,
+      });
+    };
+
+    ScrollTrigger.create({
+      trigger: "#skills",
+      start: "top center",
+      end: "bottom center",
+      onEnter: () => setGlobeX(shift),
+      onEnterBack: () => setGlobeX(shift),
+      onLeaveBack: () => setGlobeX(0),
     });
-    gsap.to(containerRef.current, {
-      xPercent: -shift,
-      ease: "power2.inOut",
-      scrollTrigger: {
-        trigger: "#projects",
-        start: "top bottom",
-        end: "top 30%",
-        scrub: 1,
-      },
+    ScrollTrigger.create({
+      trigger: "#projects",
+      start: "top center",
+      end: "bottom center",
+      onEnter: () => setGlobeX(-shift),
+      onEnterBack: () => setGlobeX(-shift),
+      onLeaveBack: () => setGlobeX(shift),
     });
-    gsap.to(containerRef.current, {
-      xPercent: 0,
-      ease: "power2.inOut",
-      scrollTrigger: {
-        trigger: "#about",
-        start: "top bottom",
-        end: "top 30%",
-        scrub: 1,
-      },
+    ScrollTrigger.create({
+      trigger: "#experience",
+      start: "top center",
+      end: "bottom center",
+      onEnter: () => setGlobeX(0),
+      onEnterBack: () => setGlobeX(0),
+      onLeaveBack: () => setGlobeX(-shift),
     });
 
     // Mouse parallax
