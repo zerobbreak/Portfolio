@@ -202,29 +202,6 @@ body {
     animation: marquee 32s linear infinite;
   }
 
-  /* Scanline sweep ----------------------------------------------------- */
-
-  .scanline {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-    pointer-events: none;
-  }
-  .scanline::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 140px;
-    background: linear-gradient(
-      to bottom,
-      transparent,
-      color-mix(in srgb, var(--color-brand-primary) 12%, transparent),
-      transparent
-    );
-    animation: scan 7s ease-in-out infinite;
-  }
-
   .animate-fade-in {
     animation: fadeIn 0.5s ease-out forwards;
   }
@@ -288,17 +265,6 @@ body {
   }
 }
 
-@keyframes scan {
-  0% {
-    top: -140px;
-  }
-  50% {
-    top: 100%;
-  }
-  100% {
-    top: -140px;
-  }
-}
 
 @media (prefers-reduced-motion: reduce) {
   *,

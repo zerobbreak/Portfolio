@@ -361,7 +361,6 @@ export default function Home() {
       <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden" style={{ perspective: "800px" }}>
         <div className="absolute inset-0 grid-bg -z-10" />
         <div className="noise-overlay -z-10" />
-        <div className="scanline -z-10" />
         <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-background -z-10" />
 
         <div className="container mx-auto px-6 text-center relative">
