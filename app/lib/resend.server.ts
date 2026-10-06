@@ -1,10 +1,13 @@
 import { Resend } from "resend";
 
-if (!process.env.RESEND_API_KEY) {
-  console.warn("WARNING: RESEND_API_KEY is not set in environment variables");
-} else {
-  console.log("Resend client initialized with API key");
+let resend: Resend | undefined;
+
+export function getResendClient(): Resend {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    throw new Error("RESEND_API_KEY is not configured");
+  }
+
+  resend ??= new Resend(apiKey);
+  return resend;
 }
-
-export const resend = new Resend(process.env.RESEND_API_KEY);
-

@@ -25,7 +25,7 @@ import { BsGithub } from "react-icons/bs";
 import { LiaLinkedin } from "react-icons/lia";
 import { BiMailSend } from "react-icons/bi";
 import { HiOutlineLocationMarker, HiOutlinePhone } from "react-icons/hi";
-import { resend } from "../lib/resend.server";
+import { getResendClient } from "../lib/resend.server";
 import { getContactEmailHtml } from "../lib/email-templates.server";
 
 export async function action({ request }: { request: Request }) {
@@ -38,7 +38,7 @@ export async function action({ request }: { request: Request }) {
   console.log(`Attempting to send email for: ${name} (${email})`);
 
   try {
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await getResendClient().emails.send({
       from: "Portfolio <onboarding@resend.dev>",
       to: "utshuma6@gmail.com",
       replyTo: email,
