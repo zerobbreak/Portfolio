@@ -76,6 +76,8 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
+const SHOW_HERO_TEXT = true;
+
 interface Skill {
   name: string;
   icon: React.ReactNode;
@@ -213,8 +215,8 @@ export default function Home() {
     ).matches;
 
     // Hero boot-up sequence
-    const heroTl = gsap.timeline({ delay: 0.1 });
-    heroTl
+    const heroTl = gsap.timeline({ delay: 0.1, paused: !SHOW_HERO_TEXT });
+    if (SHOW_HERO_TEXT) heroTl
       .fromTo(
         ".hero-badge",
         { opacity: 0, y: -10 },
@@ -358,50 +360,54 @@ export default function Home() {
       <Globe highlightColor={hoverColor} />
 
       {/* Hero Section */}
-      <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden" style={{ perspective: "800px" }}>
+      <section className="relative min-h-[92vh] flex items-center overflow-hidden" style={{ perspective: "800px" }}>
         <div className="absolute inset-0 grid-bg -z-10" />
         <div className="noise-overlay -z-10" />
         <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-background -z-10" />
 
-        <div className="container mx-auto px-6 text-center relative">
-          <div className="hero-badge inline-flex items-center gap-2 mb-6 px-4 py-1.5 border border-brand-primary/40 text-brand-primary font-mono text-xs tracking-[0.2em] uppercase opacity-0">
-            <span className="w-1.5 h-1.5 rounded-full bg-brand-primary animate-pulse" />
-            Available for hire
+        {SHOW_HERO_TEXT && (
+          <div className="container mx-auto px-6 text-left relative z-10">
+            <div className="w-full md:max-w-[48%]">
+              <div className="hero-badge inline-flex items-center gap-2 mb-6 px-4 py-1.5 border border-brand-primary/40 text-brand-primary font-mono text-xs tracking-[0.2em] uppercase opacity-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-brand-primary animate-pulse" />
+                Available for hire
+              </div>
+
+              <p className="hero-prompt font-mono text-xs sm:text-sm text-muted-foreground mb-4 opacity-0">
+                unathi@dev:~$ whoami<span className="cursor-blink" />
+              </p>
+
+              <h1 className="max-w-2xl font-mono text-4xl sm:text-5xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-6 tracking-tight leading-[1.05]">
+                <span className="block overflow-hidden">
+                  <span className="hero-word inline-block">Hi, I am</span>
+                </span>
+                <span className="block overflow-hidden">
+                  <span className="hero-word inline-block text-gradient text-glow">Unathi Tshuma</span>
+                </span>
+              </h1>
+
+              <p className="hero-sub font-mono text-base sm:text-lg text-muted-foreground mb-10 max-w-xl opacity-0">
+                <span className="text-brand-primary">// </span>
+                Junior Python Developer / Full-stack Web Developer
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 font-mono text-sm">
+                <a
+                  href="#projects"
+                  className="hero-cta px-8 py-4 bg-brand-primary hover:bg-brand-primary-hover text-background font-semibold transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2 opacity-0 uppercase tracking-wide"
+                >
+                  [ View Work <FaArrowRight size={13} /> ]
+                </a>
+                <a
+                  href="#contact"
+                  className="hero-cta px-8 py-4 border border-border hover:border-brand-primary text-foreground hover:text-brand-primary font-semibold transition-all hover:-translate-y-0.5 flex items-center justify-center opacity-0 uppercase tracking-wide"
+                >
+                  [ Contact Me ]
+                </a>
+              </div>
+            </div>
           </div>
-
-          <p className="hero-prompt font-mono text-xs sm:text-sm text-muted-foreground mb-4 opacity-0">
-            unathi@dev:~$ whoami<span className="cursor-blink" />
-          </p>
-
-          <h1 className="font-mono text-4xl sm:text-5xl md:text-7xl font-bold mb-6 tracking-tight leading-[1.05]">
-            <span className="block overflow-hidden">
-              <span className="hero-word inline-block">Hi, I am</span>
-            </span>
-            <span className="block overflow-hidden">
-              <span className="hero-word inline-block text-gradient text-glow">Unathi Tshuma</span>
-            </span>
-          </h1>
-
-          <p className="hero-sub font-mono text-base sm:text-lg text-muted-foreground mb-10 max-w-2xl mx-auto opacity-0">
-            <span className="text-brand-primary">// </span>
-            Junior Python Developer — Full-stack Web Developer
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center font-mono text-sm">
-            <a
-              href="#projects"
-              className="hero-cta px-8 py-4 bg-brand-primary hover:bg-brand-primary-hover text-background font-semibold transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2 opacity-0 uppercase tracking-wide"
-            >
-              [ View Work <FaArrowRight size={13} /> ]
-            </a>
-            <a
-              href="#contact"
-              className="hero-cta px-8 py-4 border border-border hover:border-brand-primary text-foreground hover:text-brand-primary font-semibold transition-all hover:-translate-y-0.5 flex items-center justify-center opacity-0 uppercase tracking-wide"
-            >
-              [ Contact Me ]
-            </a>
-          </div>
-        </div>
+        )}
 
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 font-mono text-[10px] tracking-[0.3em] uppercase text-muted-foreground">
           <span className="w-px h-12 bg-linear-to-b from-brand-primary to-transparent" />
