@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import type { Route } from "./+types/home";
-import ProjectCard from "../components/ProjectCard";
+import ProjectShowcase from "../components/ProjectShowcase";
 import WorkExperience from "../components/WorkExperience";
 import ContactForm from "../components/ContactForm";
 import Globe from "../components/Globe";
@@ -125,88 +125,8 @@ function SkillCard({
 }
 
 export default function Home() {
-  const projects = [
-    {
-      title: "Lumina AI Notes",
-      description:
-        "AI-powered note-taking application designed to enhance productivity. Features intelligent organization, auto-summarization, and a powerful search capability. Solves the problem of information overload by helping users structure their thoughts effortlessly.",
-      image: "/projects/lumina-ai-notes.png",
-      technologies: [
-        "React",
-        "TypeScript",
-        "OpenAI API",
-        "Tailwind CSS",
-        "Vite",
-      ],
-      githubUrl: "https://github.com/zerobbreak/Lumina-AI-Notes",
-      liveUrl: "#",
-    },
-    {
-      title: "AI-Mazing",
-      description:
-        "An interactive AI learning platform that simplifies machine learning concepts for beginners. Features gamified tutorials and visual demonstrations. Aims to make AI education accessible and engaging for everyone.",
-      image: "/projects/ai-mazing.png",
-      technologies: ["React", "Python", "TensorFlow.js", "Framer Motion"],
-      githubUrl: "https://github.com/zerobbreak/AI-Mazing",
-      liveUrl: "#",
-    },
-    {
-      title: "Threads App Clone",
-      description:
-        "A modern social media platform clone replicating the core features of Threads. Includes real-time updates, threaded conversations, and a sleek mobile-first design. Demonstrates proficiency in building complex social interactions.",
-      image: "/projects/threads-app.png",
-      technologies: [
-        "Next.js",
-        "TypeScript",
-        "PostgreSQL",
-        "Prisma",
-        "Tailwind CSS",
-      ],
-      githubUrl: "https://github.com/zerobbreak/Threads-app",
-      liveUrl: "https://threads-app-1ab4.vercel.app/",
-    },
-    {
-      title: "Job Market Agent",
-      description:
-        "An automated agent that streamlines the job hunt. Performs company research, generates tailored CVs, and tracks applications. Built to save developers time and increase application quality.",
-      image: "/projects/job-market-agent.png",
-      technologies: [
-        "Python",
-        "Selenium",
-        "OpenAI API",
-        "PyTest",
-        "python-docx",
-      ],
-      githubUrl: "https://github.com/zerobbreak/Job-Market-Agent",
-      liveUrl: "https://job-market-frontend.vercel.app/",
-    },
-    {
-      title: "University Library System",
-      description:
-        "Comprehensive library management system with Admin and User panels. Manages inventory, tracks borrowing, and handles fines. Built with a robust SQL database architecture for data integrity.",
-      image: "/projects/library-system.png",
-      technologies: ["React", "SQL", "Node.js", "Express", "Tailwind CSS"],
-      githubUrl: "https://github.com/zerobbreak/University-Library",
-      liveUrl: "https://university-library-navy.vercel.app/sign-in",
-    },
-    {
-      title: "AI Analyzer",
-      description:
-        "An intelligent resume analysis tool that leverages AI to evaluate resumes against job descriptions. Features automated skill matching, ATS compatibility scoring, and personalized improvement suggestions. Helps job seekers optimize their resumes for better application success rates.",
-      image: "/projects/ai-analyzer.png",
-      technologies: [
-        "React",
-        "TypeScript",
-        "OpenAI API",
-        "Tailwind CSS",
-        "Vite",
-      ],
-      githubUrl: "https://github.com/zerobbreak/AI-Analyzer",
-      liveUrl: "https://ai-resume-analyzer-pi-two.vercel.app/",
-    },
-  ];
-
   const [hoverColor, setHoverColor] = useState<string | null>(null);
+  const [selectedProject, setSelectedProject] = useState<number | null>(null);
 
   React.useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -314,21 +234,6 @@ export default function Home() {
       }
     );
 
-    gsap.fromTo(
-      "#projects .project-card",
-      { opacity: 0, y: 24 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        stagger: 0.08,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: "#projects",
-          start: "top 70%",
-        },
-      }
-    );
 
     return () => {
       heroTl.kill();
@@ -357,7 +262,11 @@ export default function Home() {
 
   return (
     <div id="top" className="flex flex-col gap-20 pb-20">
-      <Globe highlightColor={hoverColor} />
+      <Globe
+        highlightColor={hoverColor}
+        selected={selectedProject}
+        onSelect={setSelectedProject}
+      />
 
       {/* Hero Section */}
       <section className="relative min-h-[92vh] flex items-center overflow-hidden" style={{ perspective: "800px" }}>
@@ -468,31 +377,25 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Projects Section */}
-        <section id="projects" className="container mx-auto px-6 pt-20">
-          <div className="grid lg:grid-cols-[0.8fr_1.2fr] gap-12 items-start">
-            {/* Left side empty for the globe */}
-            <div className="hidden lg:block h-full" />
-            <div>
-              <div className="mb-16">
-                <span className="font-mono text-[11px] tracking-[0.3em] uppercase text-brand-primary mb-3 block">
-                  / 02 — Selected Work
-                </span>
-                <h2 className="font-mono text-3xl md:text-5xl font-bold mb-6 text-foreground">
-                  Featured Projects
-                </h2>
-                <p className="text-lg text-muted-foreground max-w-xl">
-                  Here are some of the projects I've worked on recently. Each
-                  one presented unique challenges and learning opportunities.
-                </p>
-              </div>
-              <div className="grid md:grid-cols-2 gap-8">
-                {projects.map((project, index) => (
-                  <div key={project.title} className="project-card">
-                    <ProjectCard {...project} index={index} />
-                  </div>
-                ))}
-              </div>
+        {/* Projects Section — the card sits on the centered, enlarged globe */}
+        {/* pointer-events-none lets clicks through to the globe's pins; the card opts back in */}
+        <section id="projects" className="container mx-auto px-6 pt-20 pointer-events-none">
+          <div className="mb-10 text-center flex flex-col items-center">
+            <span className="font-mono text-[11px] tracking-[0.3em] uppercase text-brand-primary mb-3 block">
+              / 02 — Selected Work
+            </span>
+            <h2 className="font-mono text-3xl md:text-5xl font-bold mb-6 text-foreground">
+              Featured Projects
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-xl">
+              Every project starts in Midrand. Pick a pin on the globe to get
+              its boarding pass, then tear the stub to see the problem, the
+              goal and how it's built.
+            </p>
+          </div>
+          <div className="relative h-[150vh]">
+            <div className="sticky top-[calc(50vh+48px)] -translate-y-1/2 z-10">
+              <ProjectShowcase selected={selectedProject} onSelect={setSelectedProject} />
             </div>
           </div>
         </section>

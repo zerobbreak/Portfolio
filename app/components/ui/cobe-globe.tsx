@@ -20,7 +20,23 @@ interface CobeGlobeProps {
   speed?: number;
   /** Optional CSS hex color that overrides the glow (e.g. skill hover). */
   accent?: string | null;
+  /** [lat, lon] to turn toward and hold. Null = free auto-spin. */
+  focus?: [number, number] | null;
+  /** Resting tilt when not focused. */
+  baseTheta?: number;
+  /** Radians to tilt past a focused point, so it sits above center. */
+  focusLift?: number;
+  /** Called every frame with the rotation cobe actually rendered. */
+  onFrame?: (f: { phi: number; theta: number }) => void;
 }
+
+/** cobe's own convention for facing a lat/lon (from the cobe docs). */
+export const locationToAngles = (lat: number, lon: number): [number, number] => [
+  Math.PI - ((lon * Math.PI) / 180 - Math.PI / 2),
+  (lat * Math.PI) / 180,
+];
+
+const wrapAngle = (a: number) => Math.atan2(Math.sin(a), Math.cos(a));
 
 const hex = (h: string): [number, number, number] => [
   parseInt(h.slice(1, 3), 16) / 255,
@@ -37,10 +53,22 @@ export function CobeGlobe({
   markers = DEFAULT_MARKERS,
   speed = 0.004,
   accent = null,
+  focus = null,
+  baseTheta = 0.25,
+  focusLift = 0,
+  onFrame,
 }: CobeGlobeProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const accentRef = useRef<string | null>(accent);
   accentRef.current = accent;
+  const focusRef = useRef<[number, number] | null>(null);
+  focusRef.current = focus
+    ? ((a) => [a[0], a[1] - focusLift] as [number, number])(locationToAngles(focus[0], focus[1]))
+    : null;
+  const baseThetaRef = useRef(baseTheta);
+  baseThetaRef.current = baseTheta;
+  const onFrameRef = useRef(onFrame);
+  onFrameRef.current = onFrame;
   const [dark, setDark] = useState(true);
 
   // Track the .dark class on <html>
@@ -62,6 +90,7 @@ export function CobeGlobe({
     ).matches;
 
     let phi = 0;
+    let theta = baseThetaRef.current;
     let width = 0;
     let dragging = false;
     let lastX = 0;
@@ -89,11 +118,22 @@ export function CobeGlobe({
       glowColor: dark ? hex("#4dff97") : hex("#0f8a4c"),
       markers,
       onRender: (state) => {
+        const target = focusRef.current;
+        const k = reduceMotion ? 1 : 0.08;
         if (!dragging) {
-          phi += reduceMotion ? 0 : speed;
-          velocity *= 0.95;
+          if (target) {
+            phi += wrapAngle(target[0] - (phi + velocity)) * k;
+            theta += (target[1] - theta) * k;
+            velocity *= 0.8;
+          } else {
+            phi += reduceMotion ? 0 : speed;
+            theta += (baseThetaRef.current - theta) * k;
+            velocity *= 0.95;
+          }
         }
         state.phi = phi + velocity;
+        state.theta = theta;
+        onFrameRef.current?.({ phi: phi + velocity, theta });
         state.glowColor = accentRef.current
           ? hex(accentRef.current)
           : dark
