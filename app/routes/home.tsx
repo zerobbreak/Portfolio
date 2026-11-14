@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import type { Route } from "./+types/home";
 import ProjectShowcase from "../components/ProjectShowcase";
 import WorkExperience from "../components/WorkExperience";
+import AboutDatasheet from "../components/AboutDatasheet";
 import ContactForm from "../components/ContactForm";
 import Globe from "../components/Globe";
 import { FaArrowRight } from "react-icons/fa";
@@ -9,20 +10,46 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useTilt } from "~/lib/useTilt";
 
+import type { IconType } from "react-icons";
 import {
+  SiBlazor,
+  SiCelery,
+  SiClerk,
   SiCss3,
+  SiDjango,
+  SiDocker,
+  SiDotnet,
   SiExpress,
+  SiFastapi,
+  SiFramer,
   SiGit,
+  SiGooglegemini,
   SiHtml5,
+  SiHuggingface,
   SiJavascript,
   SiMongodb,
+  SiNextdotjs,
   SiNodedotjs,
+  SiOpenai,
+  SiPostgresql,
+  SiPrisma,
+  SiPytest,
   SiPython,
   SiReact,
+  SiRedis,
+  SiScikitlearn,
+  SiSelenium,
+  SiSharp,
+  SiSqlite,
+  SiSupabase,
+  SiTailwindcss,
+  SiTensorflow,
   SiTypescript,
+  SiVercel,
+  SiVite,
 } from "react-icons/si";
-import { BsGithub } from "react-icons/bs";
-import { LiaLinkedin } from "react-icons/lia";
+import { skills, type Skill } from "~/data/skills";
+import { LAYERS } from "~/data/projects";
 import { BiMailSend } from "react-icons/bi";
 import { HiOutlineLocationMarker, HiOutlinePhone } from "react-icons/hi";
 import { getResendClient } from "../lib/resend.server";
@@ -78,11 +105,59 @@ export function meta({}: Route.MetaArgs) {
 
 const SHOW_HERO_TEXT = true;
 
-interface Skill {
-  name: string;
-  icon: React.ReactNode;
-  color: string;
-  hex: string;
+/** Brand icons for skills in data/skills.ts; anything missing falls back to a monogram. */
+const SKILL_ICONS: Record<string, IconType> = {
+  HTML5: SiHtml5,
+  CSS3: SiCss3,
+  JavaScript: SiJavascript,
+  TypeScript: SiTypescript,
+  React: SiReact,
+  "Next.js": SiNextdotjs,
+  "Tailwind CSS": SiTailwindcss,
+  "Framer Motion": SiFramer,
+  Blazor: SiBlazor,
+  "C#": SiSharp,
+  "ASP.NET Core": SiDotnet,
+  "Node.js": SiNodedotjs,
+  Express: SiExpress,
+  Python: SiPython,
+  Selenium: SiSelenium,
+  FastAPI: SiFastapi,
+  Django: SiDjango,
+  Celery: SiCelery,
+  "OpenAI API": SiOpenai,
+  "Gemini API": SiGooglegemini,
+  "TensorFlow.js": SiTensorflow,
+  "scikit-learn": SiScikitlearn,
+  "Sentence Transformers": SiHuggingface,
+  MongoDB: SiMongodb,
+  Supabase: SiSupabase,
+  Redis: SiRedis,
+  "EF Core": SiDotnet,
+  SQLite: SiSqlite,
+  PostgreSQL: SiPostgresql,
+  Prisma: SiPrisma,
+  Git: SiGit,
+  Vite: SiVite,
+  Vercel: SiVercel,
+  PyTest: SiPytest,
+  Clerk: SiClerk,
+  Docker: SiDocker,
+};
+
+function SkillIcon({ skill }: { skill: Skill }) {
+  const Icon = SKILL_ICONS[skill.name];
+  if (Icon) return <Icon size={28} style={{ color: skill.color }} />;
+  const initials = skill.name.replace(/[^A-Za-z0-9 ]/g, " ").split(/\s+/).filter(Boolean)
+    .map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+  return (
+    <span
+      className="w-7 h-7 flex items-center justify-center border font-mono text-[10px] font-bold"
+      style={{ color: skill.color, borderColor: skill.color }}
+    >
+      {initials}
+    </span>
+  );
 }
 
 function SkillCard({
@@ -100,24 +175,22 @@ function SkillCard({
   return (
     <div
       ref={tilt.ref}
-      onMouseEnter={() => onHover(skill.hex)}
+      onMouseEnter={() => onHover(skill.color)}
       onMouseMove={tilt.onMouseMove}
       onMouseLeave={() => {
         tilt.onMouseLeave();
         onLeave();
       }}
-      className="hud-frame group relative p-6 bg-card/60 backdrop-blur-md border border-border hover:border-brand-primary/40 text-center flex flex-col items-center justify-center gap-4 [transform-style:preserve-3d]"
+      className="hud-frame group relative h-full p-4 bg-card/60 backdrop-blur-md border border-border hover:border-brand-primary/40 text-center flex flex-col items-center justify-center gap-3 [transform-style:preserve-3d]"
       style={{ transition: "transform 0.15s ease-out, border-color 0.3s" }}
     >
       <span className="absolute top-2 left-2 font-mono text-[9px] text-muted-foreground/50">
         {String(index + 1).padStart(2, "0")}
       </span>
-      <div
-        className={`transition-transform duration-300 group-hover:scale-110 ${skill.color}`}
-      >
-        {skill.icon}
+      <div className="transition-transform duration-300 group-hover:scale-110">
+        <SkillIcon skill={skill} />
       </div>
-      <h3 className="font-mono text-xs uppercase tracking-wide text-foreground">
+      <h3 className="font-mono text-[10px] sm:text-xs uppercase tracking-wide text-foreground break-words">
         {skill.name}
       </h3>
     </div>
@@ -242,18 +315,12 @@ export default function Home() {
   }, []);
 
 
-  const skills: Skill[] = [
-    { name: "JavaScript", icon: <SiJavascript size={36} />, color: "text-yellow-400", hex: "#facc15" },
-    { name: "TypeScript", icon: <SiTypescript size={36} />, color: "text-blue-500", hex: "#3b82f6" },
-    { name: "Python", icon: <SiPython size={36} />, color: "text-sky-400", hex: "#38bdf8" },
-    { name: "MongoDB", icon: <SiMongodb size={36} />, color: "text-green-500", hex: "#22c55e" },
-    { name: "HTML5", icon: <SiHtml5 size={36} />, color: "text-orange-500", hex: "#f97316" },
-    { name: "CSS3", icon: <SiCss3 size={36} />, color: "text-blue-400", hex: "#60a5fa" },
-    { name: "React", icon: <SiReact size={36} />, color: "text-cyan-400", hex: "#22d3ee" },
-    { name: "Node.js", icon: <SiNodedotjs size={36} />, color: "text-green-600", hex: "#16a34a" },
-    { name: "Express", icon: <SiExpress size={36} />, color: "text-foreground", hex: "#9ca3af" },
-    { name: "Git", icon: <SiGit size={36} />, color: "text-red-500", hex: "#ef4444" },
-  ];
+  // Skills come from data/skills.ts, grouped by stack layer; numbering runs across groups.
+  let skillNo = 0;
+  const skillGroups = LAYERS.map((l) => ({
+    ...l,
+    items: skills.filter((s) => s.layer === l.key).map((s) => ({ skill: s, index: skillNo++ })),
+  })).filter((g) => g.items.length > 0);
 
   const tickerItems = [
     "PYTHON", "REACT", "TYPESCRIPT", "NODE.JS", "AI_INTEGRATION",
@@ -359,15 +426,26 @@ export default function Home() {
                   modern stack.
                 </p>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
-                {skills.map((skill, index) => (
-                  <div key={skill.name} className="skill-card">
-                    <SkillCard
-                      skill={skill}
-                      index={index}
-                      onHover={setHoverColor}
-                      onLeave={() => setHoverColor(null)}
-                    />
+              <div className="flex flex-col gap-10">
+                {skillGroups.map((group) => (
+                  <div key={group.key}>
+                    <h3 className="font-mono text-[11px] tracking-[0.3em] uppercase text-muted-foreground mb-4 flex items-center gap-3">
+                      {group.name}
+                      <span className="text-muted-foreground/50">[{group.items.length}]</span>
+                      <span className="flex-1 h-px bg-border" />
+                    </h3>
+                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                      {group.items.map(({ skill, index }) => (
+                        <div key={skill.name} className="skill-card">
+                          <SkillCard
+                            skill={skill}
+                            index={index}
+                            onHover={setHoverColor}
+                            onLeave={() => setHoverColor(null)}
+                          />
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -405,77 +483,7 @@ export default function Home() {
       </div>
 
       {/* About Section */}
-      <section id="about" className="container mx-auto px-6 pt-20">
-        <span className="about-reveal font-mono text-[11px] tracking-[0.3em] uppercase text-brand-primary mb-3 block">
-          / 04 — About
-        </span>
-        <div className="about-reveal hud-frame bg-card border border-border relative overflow-hidden">
-          <div className="grid-bg absolute inset-0 opacity-40 pointer-events-none" />
-          {/* Terminal title bar */}
-          <div className="relative flex items-center gap-2 px-5 py-3 border-b border-border bg-background/40">
-            <span className="w-2.5 h-2.5 rounded-full bg-brand-secondary/70" />
-            <span className="w-2.5 h-2.5 rounded-full bg-muted-foreground/40" />
-            <span className="w-2.5 h-2.5 rounded-full bg-brand-primary/70" />
-            <span className="ml-3 font-mono text-xs text-muted-foreground">~/about.md</span>
-          </div>
-
-          <div className="relative p-8 md:p-16 max-w-3xl mx-auto">
-            <h2 className="about-reveal font-mono text-3xl md:text-4xl font-bold mb-8 text-foreground">
-              About Me
-            </h2>
-            <div className="text-base md:text-lg text-muted-foreground mb-10 leading-relaxed space-y-5 text-left">
-              <p className="about-reveal">
-                <span className="text-brand-primary font-mono"># </span>
-                My journey into tech began with a curiosity about how the web
-                works, which quickly evolved into a passion for building
-                interactive experiences. I started with the basics of HTML and
-                CSS, and since then, I've immersed myself in the JavaScript
-                ecosystem, mastering React and exploring backend technologies.
-              </p>
-              <p className="about-reveal">
-                <span className="text-brand-primary font-mono"># </span>
-                One of my proudest achievements has been building full-stack
-                applications that solve real problems, like my Job Market Agent
-                which automates tedious application processes. I believe in
-                writing clean, maintainable code and am constantly pushing
-                myself to learn new tools and best practices.
-              </p>
-              <p className="about-reveal">
-                <span className="text-brand-primary font-mono"># </span>
-                Currently, I'm diving deeper into AI integration in web apps and
-                expanding my knowledge of cloud services. When I'm not coding,
-                you can find me gaming, reading about the latest tech trends.
-              </p>
-            </div>
-
-            <div className="about-reveal flex justify-center gap-4">
-              <a
-                href="https://github.com/zerobbreak"
-                target="_blank"
-                className="w-11 h-11 flex items-center justify-center border border-border hover:border-brand-primary hover:text-brand-primary text-muted-foreground transition-colors"
-                aria-label="GitHub Profile"
-              >
-                <BsGithub size={20} />
-              </a>
-              <a
-                href="https://www.linkedin.com/in/unathi-tshuma-7a30a523b/"
-                target="_blank"
-                className="w-11 h-11 flex items-center justify-center border border-border hover:border-brand-primary hover:text-brand-primary text-muted-foreground transition-colors"
-                aria-label="LinkedIn Profile"
-              >
-                <LiaLinkedin size={20} />
-              </a>
-              <a
-                href="mailto:utshuma6@gmail.com"
-                className="w-11 h-11 flex items-center justify-center border border-border hover:border-brand-primary hover:text-brand-primary text-muted-foreground transition-colors"
-                aria-label="Email Me"
-              >
-                <BiMailSend size={20} />
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
+      <AboutDatasheet />
 
       {/* Contact Section */}
       <section id="contact" className="container mx-auto px-6 pt-20 max-w-4xl">
